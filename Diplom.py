@@ -17,40 +17,7 @@ root.title("Data")
 root.geometry("1000x500") 
 #root.withdraw()
 
-lbl = Label(root, text="Выберите файл для обработки: ", font=("Arial Bold", 16))  
-lbl.grid(column=0, row=0) 
-
-def clicked():
-    lbl.configure(text="Я же просил...")
-
-btn = Button(root, text="Не нажимать!", command=clicked)
-#root.grid_rowconfigure(index=0, weight=1)
-#root.grid_columnconfigure(index=0, weight=1)
-#root.grid_columnconfigure(index=1, weight=1)
- 
-#text_editor = Text()
-#text_editor.grid(column=0, columnspan=2, row=0)
- 
-
-## открываем файл в текстовое поле
-#def open_file(EXP):
-#    filepath = filedialog.askopenfilename()
-#    if filepath != "":
-#        EXP = pd.read_csv(file_path, delimiter=';', encoding='latin-1')
-#        print('File is upload!')
- 
-
-#open_button = ttk.Button(text="Открыть файл", command=open_file)
-#open_button.grid(column=0, row=1, sticky=NSEW, padx=10)
-
 file_path = filedialog.askopenfilename()
-
-EXP2 = pd.read_csv(file_path, delimiter=';', encoding='latin-1')
-EXP2 = EXP2.dropna()
-
-Type_v = EXP2.iloc[:, 4].unique()
-Time_v = EXP2.iloc[:, 5].unique()
-Subst_v = EXP2.iloc[:, 6].unique()
 
 def slope(xs, ys):
     '''Вычисление наклона линии (углового коэффициента)'''
@@ -114,16 +81,31 @@ def add_values_to_table(se, final_table):
                                            round(np.percentile(se.iloc[4:(se.shape[0]-4), 7], 85), 2), se.iloc[0, 4],
                                            se.iloc[0, 5], se.iloc[0, 6] ]
 
-r = 0
-for l in Type_v:
-    print("l:" + str(l))
-    for w in Time_v:
-        print("w:" + str(w))
-        for k in Subst_v:
-            print("k:" + str(k))
-            r = r + 1
-            se = EXP2[(EXP2.iloc[:, 4] == l) & (EXP2.iloc[:, 5] == w) & (EXP2.iloc[:, 6] == k)]
-            add_values_to_table(se, final_table)
+    
+def file_calculation(file_path):
+
+    EXP = pd.read_csv(file_path, delimiter=';', encoding='latin-1')
+    EXP = EXP.dropna()
+
+    Type_v = EXP.iloc[:, 4].unique()
+    Time_v = EXP.iloc[:, 5].unique()
+    Subst_v = EXP.iloc[:, 6].unique()
+
+    r = 0
+    for l in Type_v:
+        print("l:" + str(l))
+        for w in Time_v:
+            print("w:" + str(w))
+            for k in Subst_v:
+                print("k:" + str(k))
+                r = r + 1
+                se = EXP[(EXP.iloc[:, 4] == l) & (EXP.iloc[:, 5] == w) & (EXP.iloc[:, 6] == k)]
+                add_values_to_table(se, final_table)
+                
+    print(final_table)
+
+final_table =  file_calculation(file_path)
+
 
 #se = EXP2[(EXP2['TYPE_VALUE'] == Type_v[0]) & (EXP2['TIME_VALUE(BEFORE/AFTER)'] == Time_v[0]) & (EXP2['SUBSTANCE_VALUE (BUT/ACH)'] == Subst_v[0])]
 #add_values_to_table(se, final_table)
@@ -177,32 +159,7 @@ for i in list_of_res:
     print(i)
     tree.insert("", END, values=i)
 
-## добавляем горизонтальную прокрутку
-#scrollbar = ttk.Scrollbar(orient="horizontal", command=tree.yview)
-#tree.configure(yscroll=scrollbar.set)
-#scrollbar.grid(row=0, column=1, sticky="ns")
- 
 
 root.mainloop()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#final_table.to_excel('./teams.xlsx', sheet_name='EXP_result', index=False)
-
-
 
 
