@@ -116,23 +116,7 @@ def file_calculation(file_path):
                         counter_ = counter_ + 1
 
 
-def index_calculation(temp):
-    #temp.iloc[:, 2] = [x.replace(',', '.') for x in temp.iloc[:, 2]]
-    #temp.iloc[:, 3] = [x.replace(',', '.') for x in temp.iloc[:, 3]]
-    #temp.iloc[:, 4] = [x.replace(',', '.') for x in temp.iloc[:, 4]]
-    #temp.iloc[:, 5] = [x.replace(',', '.') for x in temp.iloc[:, 5]]
-    #temp.iloc[:, 6] = [x.replace(',', '.') for x in temp.iloc[:, 6]]
-    #temp.iloc[:, 7] = [x.replace(',', '.') for x in temp.iloc[:, 7]]
-    #temp.iloc[:, 8] = [x.replace(',', '.') for x in temp.iloc[:, 8]]
-
-
-    #temp.iloc[:, 2]  = temp.iloc[:, 2].astype(float)
-    #temp.iloc[:, 3]  = temp.iloc[:, 3].astype(float)
-    #temp.iloc[:, 4]  = temp.iloc[:, 4].astype(float)
-    #temp.iloc[:, 5]  = temp.iloc[:, 5].astype(float)
-    #temp.iloc[:, 6]  = temp.iloc[:, 6].astype(float)
-    #temp.iloc[:, 7]  = temp.iloc[:, 7].astype(float)
-    #temp.iloc[:, 8]  = temp.iloc[:, 8].astype(float)
+def arg_calculation(temp):
 
     Type_exp_1 = temp.iloc[:, 0].unique()
     Type_v_1 = temp.iloc[:, 9].unique()
@@ -141,66 +125,94 @@ def index_calculation(temp):
 
     agr_final_table = pd.DataFrame()
 
-    agr_final_table.insert(0, "EXP/CONTR", -1)
-    agr_final_table.insert(1, "TYPE_VALUE", -1)
-    agr_final_table.insert(2, "TIME_VALUE", -1)
-    agr_final_table.insert(3, "SUBST_VALUE", -1)
-    agr_final_table.insert(4, "AMPLITUDE", -1)
-    agr_final_table.insert(5, "COUNT_1000", -1)
-    agr_final_table.insert(6, "COUNT_3000", -1)
-    agr_final_table.insert(7, "TONUS", -1)
-    agr_final_table.insert(8, "PERCENTILE_0.995", -1)
-    agr_final_table.insert(9, "PERCENTILE_0.05", -1)
-    agr_final_table.insert(10, "PERCENTILE_0.85", -1)
+    agr_final_table.insert(0, "PARAM", -1)
+    agr_final_table.insert(1, "AMPLITUDE_BEFORE", -1)
+    agr_final_table.insert(2, "AMPLITUDE_AFTER", -1)
+    agr_final_table.insert(3, "COUNT_1000_BEFORE", -1)
+    agr_final_table.insert(4, "COUNT_1000_AFTER", -1)
+    agr_final_table.insert(5, "COUNT_3000_BEFORE", -1)
+    agr_final_table.insert(6, "COUNT_3000_AFTER", -1)
+    agr_final_table.insert(7, "TONUS_BEFORE", -1)
+    agr_final_table.insert(8, "TONUS_AFTER", -1)
+    agr_final_table.insert(9, "PERCENTILE_0.995_BEFORE", -1)
+    agr_final_table.insert(10, "PERCENTILE_0.995_AFTER", -1)
+    agr_final_table.insert(11, "PERCENTILE_0.05_BEFORE", -1)
+    agr_final_table.insert(12, "PERCENTILE_0.05_AFTER", -1)
+    agr_final_table.insert(13, "PERCENTILE_0.85_BEFORE", -1)
+    agr_final_table.insert(14, "PERCENTILE_0.85_AFTER", -1)
+
+   
 
     for k in Type_exp_1:
         for l in Type_v_1:
             for s in Subst_v_1:
-                 for e in Time_v_1:
-                    temp1 = temp[(temp.iloc[:, 0] == k)
-                                & (temp.iloc[:, 9] == l)
-                                & (temp.iloc[:, 10] == e)
-                                & (temp.iloc[:, 11] == s)
-                              ]  
-                    if temp1.empty: 
-                        continue
-                    agr_final_table.loc[len(agr_final_table.index)] = [
-                    k, l, e, s,   
+                temp1 = temp[(temp.iloc[:, 0] == k)
+                            & (temp.iloc[:, 9] == l)
+                            & (temp.iloc[:, 10] == 'BEFORE')
+                            & (temp.iloc[:, 11] == s)
+                            ] 
+                
+                temp2 = temp[(temp.iloc[:, 0] == k)
+                            & (temp.iloc[:, 9] == l)
+                            & (temp.iloc[:, 10] == 'AFTER')
+                            & (temp.iloc[:, 11] == s)
+                            ] 
 
-                    round(statistics.median(temp1.iloc[:, 2]), 2),
-                    round(statistics.median(temp1.iloc[:, 3]), 2),
-                    round(statistics.median(temp1.iloc[:, 4]), 2),
-                    round(statistics.median(temp1.iloc[:, 5]), 2),
-                    round(statistics.median(temp1.iloc[:, 6]), 2),
-                    round(statistics.median(temp1.iloc[:, 7]), 2),
-                    round(statistics.median(temp1.iloc[:, 8]), 2)
-                    ]
+                if temp1.empty: 
+                    continue
+        
+                agr_final_table.loc[len(agr_final_table.index)] = [
+                k + '_' + l + '_' + s,   
 
-    for i in range(len(agr_final_table.index) - 1):
-        i = i + 1
-        if ((agr_final_table.iloc[i, 0] == agr_final_table.iloc[i - 1, 0]) & 
-           (agr_final_table.iloc[i, 1] == agr_final_table.iloc[i - 1, 1]) &
-            (agr_final_table.iloc[i, 3] == agr_final_table.iloc[i - 1, 3])):
-         
-            agr_final_table.loc[len(agr_final_table.index)] = [
-                    agr_final_table.iloc[i, 0],
-                    agr_final_table.iloc[i, 1],
-                    ' ',
-                    agr_final_table.iloc[i, 3],
-                    round((agr_final_table.iloc[i, 4] / agr_final_table.iloc[i - 1, 4]), 2),
-                    round((agr_final_table.iloc[i, 5] / agr_final_table.iloc[i - 1, 5]), 2),
-                    round((agr_final_table.iloc[i, 6] / agr_final_table.iloc[i - 1, 6]), 2),
-                    round((agr_final_table.iloc[i, 7] / agr_final_table.iloc[i - 1, 7]), 2),
-                    round((agr_final_table.iloc[i, 8] / agr_final_table.iloc[i - 1, 8]), 2),
-                    round((agr_final_table.iloc[i, 9] / agr_final_table.iloc[i - 1, 9]), 2),
-                    round((agr_final_table.iloc[i, 10] / agr_final_table.iloc[i - 1,10]), 2)]
-        else:
-            continue
-   
+                round(statistics.median(temp1.iloc[:, 2]), 2),
+                round(statistics.median(temp2.iloc[:, 2]), 2),
+                round(statistics.median(temp1.iloc[:, 3]), 2),
+                round(statistics.median(temp2.iloc[:, 3]), 2),
+                round(statistics.median(temp1.iloc[:, 4]), 2),
+                round(statistics.median(temp2.iloc[:, 4]), 2),
+                round(statistics.median(temp1.iloc[:, 5]), 2),
+                round(statistics.median(temp2.iloc[:, 5]), 2),
+                round(statistics.median(temp1.iloc[:, 6]), 2),
+                round(statistics.median(temp2.iloc[:, 6]), 2),
+                round(statistics.median(temp1.iloc[:, 7]), 2),
+                round(statistics.median(temp2.iloc[:, 7]), 2),
+                round(statistics.median(temp1.iloc[:, 8]), 2),
+                round(statistics.median(temp2.iloc[:, 8]), 2)
+                ]
+
+    
     return agr_final_table
 
 
+def index_calculation(agr_final_table):
 
+    index_final_table = pd.DataFrame()
+
+    index_final_table.insert(0, "PARAM", -1)
+    index_final_table.insert(1, "AMPLITUDE", -1)
+    index_final_table.insert(2, "COUNT_1000", -1)
+    index_final_table.insert(3, "COUNT_3000", -1)
+    index_final_table.insert(4, "TONUS", -1)
+    index_final_table.insert(5, "PERCENTILE_0.995", -1)
+    index_final_table.insert(6, "PERCENTILE_0.05", -1)
+    index_final_table.insert(7, "PERCENTILE_0.85", -1)
+
+
+
+    for i in range(len(agr_final_table.index)):
+        index_final_table.loc[len(index_final_table.index)] = [
+                    agr_final_table.iloc[i, 0],
+                    round((agr_final_table.iloc[i, 2] / agr_final_table.iloc[i, 1]), 2),
+                    round((agr_final_table.iloc[i, 4] / agr_final_table.iloc[i, 3]), 2),
+                    round((agr_final_table.iloc[i, 6] / agr_final_table.iloc[i, 5]), 2),
+                    round((agr_final_table.iloc[i, 8] / agr_final_table.iloc[i, 7]), 2),
+                    round((agr_final_table.iloc[i, 10] / agr_final_table.iloc[i, 9]), 2),
+                    round((agr_final_table.iloc[i, 12] / agr_final_table.iloc[i, 11]), 2),
+                    round((agr_final_table.iloc[i, 14] / agr_final_table.iloc[i, 13]), 2),
+         
+                    ]
+
+    return index_final_table
 
 
 if __name__ == '__main__':
@@ -216,10 +228,47 @@ if __name__ == '__main__':
     file_paths_in = filedialog.askopenfilenames(title='Select experiment files')
     dir_path_out = filedialog.askdirectory(title='Select folder for output files')
     file_name_out = "Summary_table.xlsx"
-    file_name_out_arg = "Index_table.xlsx"
+    file_name_out_arg = "Agr_table.xlsx"
+    file_name_out_ind = "Index_table.xlsx"
+
+
+    file_name_out_amp = "AVG_AMPLITUDE.png"
+    file_name_out_s_count = "AVG_COUNT_1000.png"
+    file_name_out_b_count = "AVG_COUNT_3000.png"
+    file_name_out_tonus = "AVG_TONUS.png"
+    file_name_out_pers_0995 = "AVG_PERCENTILE_0.995.png"
+    file_name_out_pers_005 = "AVG_PERCENTILE_0.05.png"
+    file_name_out_pers_085 = "AVG_PERCENTILE_0.85.png"
+
+    file_name_out_amp1 = "INDEX_AMPLITUDE.png"
+    file_name_out_s_count1 = "INDEX_COUNT_1000.png"
+    file_name_out_b_count1 = "INDEX_COUNT_3000.png"
+    file_name_out_tonus1 = "INDEX_TONUS.png"
+    file_name_out_pers_0995_1 = "INDEX_PERCENTILE_0.995.png"
+    file_name_out_pers_005_1 = "INDEX_PERCENTILE_0.05.png"
+    file_name_out_pers_085_1 = "INDEX_PERCENTILE_0.85.png"
+
     graph_name = "graph"
+
     file_path_out = os.path.join(dir_path_out, file_name_out)
     file_path_out_arg = os.path.join(dir_path_out, file_name_out_arg)
+    file_path_out_ind = os.path.join(dir_path_out, file_name_out_ind)
+
+    file_path_out_amp = os.path.join(dir_path_out, file_name_out_amp)
+    file_path_out_s_count = os.path.join(dir_path_out, file_name_out_s_count)
+    file_path_out_b_count = os.path.join(dir_path_out, file_name_out_b_count)
+    file_path_out_tonus = os.path.join(dir_path_out, file_name_out_tonus)
+    file_path_out_pers_0995 = os.path.join(dir_path_out, file_name_out_pers_0995)
+    file_path_out_pers_005 = os.path.join(dir_path_out, file_name_out_pers_005)
+    file_path_out_pers_085 = os.path.join(dir_path_out, file_name_out_pers_085)
+
+    file_path_out_amp1 = os.path.join(dir_path_out, file_name_out_amp1)
+    file_path_out_s_count1 = os.path.join(dir_path_out, file_name_out_s_count1)
+    file_path_out_b_count1 = os.path.join(dir_path_out, file_name_out_b_count1)
+    file_path_out_tonus1 = os.path.join(dir_path_out, file_name_out_tonus1)
+    file_path_out_pers_0995_1 = os.path.join(dir_path_out, file_name_out_pers_0995_1)
+    file_path_out_pers_005_1 = os.path.join(dir_path_out, file_name_out_pers_005_1)
+    file_path_out_pers_085_1 = os.path.join(dir_path_out, file_name_out_pers_085_1)
 
     start = time.time()
     for file_path_in in file_paths_in:
@@ -259,8 +308,64 @@ if __name__ == '__main__':
 
     final_table = pd.concat(tables).reset_index(drop=True)
     
-    arg_final_table = index_calculation(final_table)
+    arg_final_table = arg_calculation(final_table)
 
+                                                                                                                                                                                                      
+
+    arg_final_table[['PARAM', 'AMPLITUDE_BEFORE', 'AMPLITUDE_AFTER']].plot(x='PARAM', kind='bar', title = 'Усредненное значение амплитуды до/после эксперимента для каждой группы', rot=15).get_figure().savefig(file_path_out_amp)
+    arg_final_table[['PARAM', 'COUNT_1000_BEFORE', 'COUNT_1000_AFTER']].plot(x='PARAM', kind='bar', title = 'Усредненное значение малой частоты до/после эксперимента для каждой группы', rot=15).get_figure().savefig(file_path_out_s_count)
+    arg_final_table[['PARAM', 'COUNT_3000_BEFORE', 'COUNT_3000_AFTER']].plot(x='PARAM', kind='bar', title = 'Усредненное значение большой частоты до/после эксперимента для каждой группы', rot=15).get_figure().savefig(file_path_out_b_count)
+    arg_final_table[['PARAM', 'TONUS_BEFORE', 'TONUS_AFTER']].plot(x='PARAM', kind='bar', title = 'Усредненное значение тонуса до/после эксперимента для каждой группы', rot=15).get_figure().savefig(file_path_out_tonus)
+    arg_final_table[['PARAM', 'PERCENTILE_0.995_BEFORE', 'PERCENTILE_0.995_AFTER']].plot(x='PARAM', kind='bar', title = 'Усредненное значение 0,995 персентили до/после эксперимента для каждой группы', rot=15).get_figure().savefig(file_path_out_pers_0995)
+    arg_final_table[['PARAM', 'PERCENTILE_0.05_BEFORE', 'PERCENTILE_0.05_AFTER']].plot(x='PARAM', kind='bar', title = 'Усредненное значение 0,05 персентили до/после эксперимента для каждой группы', rot=15).get_figure().savefig(file_path_out_pers_005)
+    arg_final_table[['PARAM', 'PERCENTILE_0.85_BEFORE', 'PERCENTILE_0.85_AFTER']].plot(x='PARAM', kind='bar', title = 'Усредненное значение 0,85 персентили до/после эксперимента для каждой группы', rot=15).get_figure().savefig(file_path_out_pers_085)
+    plt.close('all')
+
+    index_final_table = index_calculation(arg_final_table)
+
+    fig, ax = plt.subplots()
+    plt.title("Индекс изменения амплитуды до/после эксперимента для каждой группы") 
+    ax.bar(index_final_table['PARAM'], index_final_table['AMPLITUDE'])
+    fig.savefig(file_path_out_amp1)
+    plt.close()
+
+    fig, ax = plt.subplots()
+    plt.title("Индекс изменения малой частоты до/после эксперимента для каждой группы") 
+    ax.bar(index_final_table['PARAM'], index_final_table['COUNT_1000'])
+    fig.savefig(file_path_out_s_count1)
+    plt.close()
+
+    fig, ax = plt.subplots()
+    plt.title("Индекс изменения большой частоты до/после эксперимента для каждой группы") 
+    ax.bar(index_final_table['PARAM'], index_final_table['COUNT_3000'])
+    fig.savefig(file_path_out_b_count1)
+    plt.close()
+
+    fig, ax = plt.subplots()
+    plt.title("Индекс изменения тонуса до/после эксперимента для каждой группы") 
+    ax.bar(index_final_table['PARAM'], index_final_table['TONUS'])
+    fig.savefig(file_path_out_tonus1)
+    plt.close()
+
+    fig, ax = plt.subplots()
+    plt.title("Индекс изменения 0.995 персентили до/после эксперимента для каждой группы") 
+    ax.bar(index_final_table['PARAM'], index_final_table['PERCENTILE_0.995'])
+    fig.savefig(file_path_out_pers_0995_1) 
+    plt.close()
+
+    fig, ax = plt.subplots()
+    plt.title("Индекс изменения 0.05 персентили до/после эксперимента для каждой группы") 
+    ax.bar(index_final_table['PARAM'], index_final_table['PERCENTILE_0.05'])
+    fig.savefig(file_path_out_pers_005_1)
+    plt.close()
+
+    fig, ax = plt.subplots()
+    plt.title("Индекс изменения 0.85 персентили до/после эксперимента для каждой группы") 
+    ax.bar(index_final_table['PARAM'], index_final_table['PERCENTILE_0.85'])
+    fig.savefig(file_path_out_pers_085_1) 
+    plt.close()
+
+   
     final_table.to_excel(file_path_out, index=False)
     arg_final_table.to_excel(file_path_out_arg, index=False)
-
+    index_final_table.to_excel(file_path_out_ind, index=False)
